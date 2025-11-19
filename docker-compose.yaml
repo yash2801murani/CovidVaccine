@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql/mysql-server:8.0
+    platform: linux/arm64
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vaccine
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  php-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-web
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: lscr.io/linuxserver/phpmyadmin:latest
+    platform: linux/arm64
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  db_data:
+
+
+
+
+
