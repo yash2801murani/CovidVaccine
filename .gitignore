@@ -2,7 +2,9 @@
 # .gitignore file content
 
 # Terraform configuration files
-.terraform/
+/tf
+tf/
+.tf/
 *.tfstate
 *.tfstate.*
 .terraform.lock.hcl
