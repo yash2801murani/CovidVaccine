@@ -20,7 +20,6 @@ spec:
       containers:
       - name: mysql-db
         image: mysql/mysql-server:8.0
-        platform: linux/arm64
         ports:
         - containerPort: 3306
         env:
@@ -86,7 +85,6 @@ spec:
     spec:
       containers:
       - name: php-web
-        # This image name must match your Jenkins DOCKER_IMAGE variable
         image: yash1231/php-app:latest
         ports:
         - containerPort: 80
@@ -103,7 +101,7 @@ spec:
   - protocol: TCP
     port: 8005
     targetPort: 80
-    nodePort: 30005 # Accessible at http://<Node_IP>:30005
+    nodePort: 30005 # http://<Node_Public_IP>:30005
 ---
 
 # ===============================================
@@ -128,7 +126,6 @@ spec:
       containers:
       - name: phpmyadmin
         image: lscr.io/linuxserver/phpmyadmin:latest
-        platform: linux/arm64
         ports:
         - containerPort: 80
         env:
@@ -149,4 +146,4 @@ spec:
   - protocol: TCP
     port: 8081
     targetPort: 80
-    nodePort: 30081 # Accessible at http://<Node_IP>:30081
+    nodePort: 30081 # http://<Node_Public_IP>:30081
