@@ -1,9 +1,9 @@
 <?php
 
 
-$servername="localhost";
+$servername="db";
 $username="root";
-$password="";
+$password="root";
 $database="vaccine";
 
 $con= mysqli_connect($servername, $username, $password, $database);

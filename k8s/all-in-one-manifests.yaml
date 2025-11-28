@@ -1,0 +1,152 @@
+# ===============================================
+# 1. MySQL Database Deployment, Service, and PVC
+# ===============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-db-deployment
+  labels:
+    app: mysql-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+      - name: mysql-db
+        image: mysql/mysql-server:8.0
+        platform: linux/arm64
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root"
+        - name: MYSQL_DATABASE
+          value: "vaccine"
+        - name: MYSQL_USER
+          value: "root"
+        - name: MYSQL_PASSWORD
+          value: "root"
+        volumeMounts:
+        - name: db-data-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: db-data-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql-db
+  ports:
+  - protocol: TCP
+    port: 3306
+    targetPort: 3306
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+
+# ===============================================
+# 2. PHP Web Application Deployment and Service (NodePort)
+# ===============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-web-deployment
+  labels:
+    app: php-web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: php-web
+  template:
+    metadata:
+      labels:
+        app: php-web
+    spec:
+      containers:
+      - name: php-web
+        # This image name must match your Jenkins DOCKER_IMAGE variable
+        image: yash1231/php-app:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-web-service
+spec:
+  selector:
+    app: php-web
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8005
+    targetPort: 80
+    nodePort: 30005 # Accessible at http://<Node_IP>:30005
+---
+
+# ===============================================
+# 3. phpMyAdmin Deployment and Service (NodePort)
+# ===============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: lscr.io/linuxserver/phpmyadmin:latest
+        platform: linux/arm64
+        ports:
+        - containerPort: 80
+        env:
+        - name: PMA_HOST
+          value: "mysql-service"
+        - name: PMA_PORT
+          value: "3306"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+spec:
+  selector:
+    app: phpmyadmin
+  type: NodePort
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 80
+    nodePort: 30081 # Accessible at http://<Node_IP>:30081
