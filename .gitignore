@@ -1,1 +1,18 @@
 .DS_Store
+# .gitignore file content
+
+# Terraform configuration files
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crashtest.log
+crash.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
