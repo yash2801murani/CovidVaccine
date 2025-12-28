@@ -8,7 +8,7 @@ metadata:
   labels:
     app: mysql-db
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: mysql-db
@@ -74,7 +74,7 @@ metadata:
   labels:
     app: php-web
 spec:
-  replicas: 4
+  replicas: 2
   selector:
     matchLabels:
       app: php-web
@@ -114,7 +114,7 @@ metadata:
   labels:
     app: phpmyadmin
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: phpmyadmin
