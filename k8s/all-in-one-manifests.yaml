@@ -85,7 +85,7 @@ spec:
     spec:
       containers:
       - name: php-web
-        image: nginx:stable-alpine3.23-perl
+        image: yash1231/php-app
         ports:
         - containerPort: 80
 ---
